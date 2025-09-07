@@ -1,0 +1,24 @@
+{
+  "endpoints": [
+    {
+      "path": "/api/users",
+      "method": "GET",
+      "description": "Get all users"
+    },
+    {
+      "path": "/api/users/{id}",
+      "method": "GET",
+      "description": "Get user by ID"
+    },
+    {
+      "path": "/api/users",
+      "method": "POST",
+      "description": "Create new user"
+    },
+    {
+      "path": "/api/products",
+      "method": "GET",
+      "description": "Get all products"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "endpoints": [
+    {
+      "path": "/user/login",
+      "method": "POST",
+      "description": "User authentication endpoint"
+    },
+    {
+      "path": "/user/register",
+      "method": "POST",
+      "description": "User registration endpoint"
+    },
+    {
+      "path": "/user/profile",
+      "method": "GET",
+      "description": "Get user profile"
+    },
+    {
+      "path": "/user/profile",
+      "method": "PUT",
+      "description": "Update user profile"
+    },
+    {
+      "path": "/api/products",
+      "method": "GET",
+      "description": "Get all products"
+    },
+    {
+      "path": "/api/products",
+      "method": "POST",
+      "description": "Create new product"
+    },
+    {
+      "path": "/api/products/{id}",
+      "method": "GET",
+      "description": "Get product by ID"
+    },
+    {
+      "path": "/api/products/{id}",
+      "method": "PUT",
+      "description": "Update product"
+    },
+    {
+      "path": "/api/products/{id}",
+      "method": "DELETE",
+      "description": "Delete product"
+    },
+    {
+      "path": "/api/orders",
+      "method": "GET",
+      "description": "Get all orders"
+    },
+    {
+      "path": "/api/orders",
+      "method": "POST",
+      "description": "Create new order"
+    },
+    {
+      "path": "/api/orders/{id}",
+      "method": "GET",
+      "description": "Get order by ID"
+    },
+    {
+      "path": "/api/customers",
+      "method": "GET",
+      "description": "Get all customers"
+    },
+    {
+      "path": "/api/customers/{id}",
+      "method": "GET",
+      "description": "Get customer by ID"
+    },
+    {
+      "path": "/auth/refresh",
+      "method": "POST",
+      "description": "Refresh authentication token"
+    },
+    {
+      "path": "/auth/logout",
+      "method": "POST",
+      "description": "User logout"
+    }
+  ]
+}

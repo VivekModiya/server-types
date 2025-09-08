@@ -52,3 +52,5 @@ package-lock.json
 *.gen.ts
 
 vite.config.ts.*
+
+*.vsix

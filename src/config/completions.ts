@@ -34,6 +34,6 @@ export const completionsConfig: CompletionsConfig = {
     kind: vscode.CompletionItemKind.Enum,
     optional: true,
   },
-} as const
+}
 
 export { HTTP_METHODS }

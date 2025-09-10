@@ -41,7 +41,10 @@ export class CompletionProvider {
     // Case 2: Parameter completion
     const parameterResult = this.isReadyForParameterCompletion(beforeCursor)
     if (parameterResult.isReady) {
-      return this.getParameterCompletions(parameterResult.partialParam)
+      return this.getParameterCompletions(
+        parameterResult.partialParam,
+        beforeCursor
+      )
     }
 
     // Case 3: Parameter value completion
@@ -55,6 +58,14 @@ export class CompletionProvider {
 
   private isRequestSchemaCompletion(beforeCursor: string): boolean {
     return /\/\/\s?@$/.test(beforeCursor)
+  }
+
+  private getExistingParameters(beforeCursor: string): string[] {
+    const parameterNames = [...beforeCursor.matchAll(/(\w+)="[^"]*"/g)].map(
+      match => match[1]
+    )
+
+    return parameterNames
   }
 
   private isReadyForParameterCompletion(
@@ -82,9 +93,12 @@ export class CompletionProvider {
   }
 
   private getParameterCompletions(
-    partialParam: string
+    partialParam: string,
+    beforeCursor: string
   ): vscode.CompletionItem[] {
+    const existingParams = this.getExistingParameters(beforeCursor)
     return Object.entries(completionsConfig)
+      .filter(([key]) => existingParams.includes(key) === false)
       .filter(([key]) => key.startsWith(partialParam))
       .map(([key, config]) =>
         this.completionItemFactory.createParameterCompletion(
@@ -119,5 +133,3 @@ export class CompletionProvider {
     return []
   }
 }
-
-// @request-schema endpoint="" method=""

@@ -1,24 +1,37 @@
 {
   "endpoints": [
     {
-      "path": "/api/users",
-      "method": "GET",
-      "description": "Get all users"
+      "path": "/user/login",
+      "description": "User authentication endpoint"
     },
     {
-      "path": "/api/users/{id}",
-      "method": "GET",
-      "description": "Get user by ID"
+      "path": "/user/register",
+      "description": "User registration endpoint"
     },
     {
-      "path": "/api/users",
-      "method": "POST",
-      "description": "Create new user"
+      "path": "/user/profile",
+      "description": "Get user profile"
     },
+
     {
       "path": "/api/products",
-      "method": "GET",
       "description": "Get all products"
+    },
+    {
+      "path": "/api/orders",
+      "description": "Get all orders"
+    },
+    {
+      "path": "/api/customers",
+      "description": "Get all customers"
+    },
+    {
+      "path": "/auth/refresh",
+      "description": "Refresh authentication token"
+    },
+    {
+      "path": "/auth/logout",
+      "description": "User logout"
     }
   ]
 }

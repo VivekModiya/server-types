@@ -76,3 +76,5 @@ export class CompletionItemFactory {
     return `@request-schema ${snippetParts.join(' ')}`
   }
 }
+
+// @request-schema endpoint="" method=""

@@ -54,7 +54,7 @@ export class CompletionProvider {
   }
 
   private isRequestSchemaCompletion(beforeCursor: string): boolean {
-    return beforeCursor.endsWith('// @') || beforeCursor.endsWith('//@')
+    return /\/\/\s?@$/.test(beforeCursor)
   }
 
   private isReadyForParameterCompletion(
@@ -65,11 +65,11 @@ export class CompletionProvider {
     const match = beforeCursor.match(requestSchemaPattern)
 
     if (match) {
-      const afterRequestSchema = match[1]
+      const afterRequestSchema = match[1].trim()
 
       if (
-        afterRequestSchema.trim() === '' ||
-        (afterRequestSchema.trim() && !afterRequestSchema.includes('='))
+        afterRequestSchema === '' ||
+        (afterRequestSchema && !afterRequestSchema.includes('='))
       ) {
         return {
           isReady: true,
@@ -119,3 +119,5 @@ export class CompletionProvider {
     return []
   }
 }
+
+// @request-schema endpoint="" method=""

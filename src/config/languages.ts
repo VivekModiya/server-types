@@ -5,4 +5,4 @@ export const SUPPORTED_LANGUAGES = [
   { language: 'typescriptreact', scheme: 'file' },
 ]
 
-export const COMPLETION_TRIGGERS = ['@', '"', ' ', '=']
+export const COMPLETION_TRIGGERS = []

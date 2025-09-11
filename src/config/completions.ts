@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import * as vscode from 'vscode'
 import { CompletionsConfig } from '../types'
 import endpoints from './endpoints.json'
@@ -12,9 +14,32 @@ const HTTP_METHODS = [
   'OPTIONS',
 ]
 
-export const completionsConfig: CompletionsConfig = {
+export function readSwaggerData(context: vscode.ExtensionContext): any {
+  try {
+    const filePath = path.join(
+      context.globalStorageUri.fsPath,
+      'data',
+      'swagger-data.json'
+    )
+    const fileContents = fs.readFileSync(filePath, { encoding: 'utf8' })
+    return JSON.parse(fileContents)
+  } catch (error) {
+    vscode.window.showErrorMessage(`Failed to read swagger data: ${error}`)
+    throw error
+  }
+}
+
+const getEndpointsValues = (context: vscode.ExtensionContext) => {
+  const data = readSwaggerData(context)
+  const paths = Object.keys(data.data.paths as Record<string, any>)
+  return paths
+}
+
+export const getCompletionsConfig = (
+  context: vscode.ExtensionContext
+): CompletionsConfig => ({
   endpoint: {
-    possibleValues: endpoints.endpoints.map(e => e.path),
+    possibleValues: getEndpointsValues(context),
     detail: 'Endpoint parameter',
     documentation: 'Specify the API endpoint path',
     kind: vscode.CompletionItemKind.Enum,
@@ -34,6 +59,6 @@ export const completionsConfig: CompletionsConfig = {
     kind: vscode.CompletionItemKind.Enum,
     optional: true,
   },
-}
+})
 
 export { HTTP_METHODS }

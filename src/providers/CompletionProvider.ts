@@ -1,17 +1,20 @@
 import * as vscode from 'vscode'
-import { CompletionsConfig, ParameterCompletionResult } from '../types'
-import { completionsConfig } from '../config/completions'
+import { ParameterCompletionResult } from '../types'
+import { getCompletionsConfig } from '../config/completions'
 import { SUPPORTED_LANGUAGES, COMPLETION_TRIGGERS } from '../config/languages'
 import { CompletionItemFactory } from '../factories/CompletionItemFactory'
 import { RegexUtils } from '../utils/RegexUtils'
+import { setDefaultResultOrder } from 'dns'
 
 export class CompletionProvider {
   private completionItemFactory: CompletionItemFactory
   private regexUtils: RegexUtils
+  private context: vscode.ExtensionContext
 
-  constructor() {
-    this.completionItemFactory = new CompletionItemFactory()
+  constructor(context: vscode.ExtensionContext) {
+    this.completionItemFactory = new CompletionItemFactory(context)
     this.regexUtils = new RegexUtils()
+    this.context = context
   }
 
   register(): vscode.Disposable {
@@ -31,10 +34,15 @@ export class CompletionProvider {
     const lineText = document.lineAt(position).text
     const beforeCursor = lineText.substring(0, position.character)
 
+    const { isCompletion, partialWord } =
+      this.isRequestSchemaCompletion(beforeCursor)
     // Case 1: Initial @request-schema completion
-    if (this.isRequestSchemaCompletion(beforeCursor)) {
+    if (isCompletion) {
       return [
-        this.completionItemFactory.createRequestSchemaCompletion(position),
+        this.completionItemFactory.createRequestSchemaCompletion(
+          position,
+          partialWord
+        ),
       ]
     }
 
@@ -43,7 +51,8 @@ export class CompletionProvider {
     if (parameterResult.isReady) {
       return this.getParameterCompletions(
         parameterResult.partialParam,
-        beforeCursor
+        beforeCursor,
+        position
       )
     }
 
@@ -56,8 +65,16 @@ export class CompletionProvider {
     return []
   }
 
-  private isRequestSchemaCompletion(beforeCursor: string): boolean {
-    return /\/\/\s?@$/.test(beforeCursor)
+  private isRequestSchemaCompletion(beforeCursor: string): {
+    isCompletion: boolean
+    partialWord: string
+  } {
+    const match = beforeCursor.match(/\/\/\s?@(\w*)$/)
+    if (match) {
+      return { isCompletion: true, partialWord: match[1] }
+    }
+
+    return { isCompletion: false, partialWord: '' }
   }
 
   private getExistingParameters(beforeCursor: string): string[] {
@@ -72,11 +89,15 @@ export class CompletionProvider {
     beforeCursor: string
   ): ParameterCompletionResult {
     const requestSchemaPattern =
-      /^\/\/ ?@request-schema(?:\s+\w+="[^"]*")*\s*(.*)$/
+      /^\/\/ ?@request-schema(?:\s+\w+="[^"]*")*\s+(\w*)$/
     const match = beforeCursor.match(requestSchemaPattern)
 
     if (match) {
       const afterRequestSchema = match[1].trim()
+
+      vscode.window.showInformationMessage(
+        `Matched word is ${afterRequestSchema}`
+      )
 
       if (
         afterRequestSchema === '' ||
@@ -94,17 +115,20 @@ export class CompletionProvider {
 
   private getParameterCompletions(
     partialParam: string,
-    beforeCursor: string
+    beforeCursor: string,
+    position: vscode.Position
   ): vscode.CompletionItem[] {
     const existingParams = this.getExistingParameters(beforeCursor)
+    const completionsConfig = getCompletionsConfig(this.context)
     return Object.entries(completionsConfig)
       .filter(([key]) => existingParams.includes(key) === false)
-      .filter(([key]) => key.startsWith(partialParam))
       .map(([key, config]) =>
         this.completionItemFactory.createParameterCompletion(
           key,
           config.detail,
-          config.documentation
+          config.documentation,
+          partialParam,
+          position
         )
       )
   }
@@ -112,12 +136,15 @@ export class CompletionProvider {
   private getParameterValueCompletions(
     beforeCursor: string
   ): vscode.CompletionItem[] {
-    const parameterValueRegex = this.regexUtils.createParameterValueRegex()
+    const parameterValueRegex = this.regexUtils.createParameterValueRegex(
+      this.context
+    )
     const parameterMatch = beforeCursor.match(parameterValueRegex)
 
     if (parameterMatch) {
       const parameterName = parameterMatch[1]
       const currentValue = parameterMatch[2]
+      const completionsConfig = getCompletionsConfig(this.context)
       const config = completionsConfig[parameterName]
 
       if (config) {

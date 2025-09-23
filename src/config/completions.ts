@@ -25,14 +25,20 @@ export function readSwaggerData(context: vscode.ExtensionContext): any {
     return JSON.parse(fileContents)
   } catch (error) {
     vscode.window.showErrorMessage(`Failed to read swagger data: ${error}`)
-    throw error
+    // throw error
   }
 }
 
+// @request-schema endpoint="" method=""
+
 const getEndpointsValues = (context: vscode.ExtensionContext) => {
-  const data = readSwaggerData(context)
-  const paths = Object.keys(data.data.paths as Record<string, any>)
-  return paths
+  try {
+    const data = readSwaggerData(context)
+    const paths = Object.keys(data.data.paths as Record<string, any>)
+    return paths
+  } catch {
+    return ['Vivek', 'Nitish']
+  }
 }
 
 export const getCompletionsConfig = (

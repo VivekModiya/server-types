@@ -4,7 +4,6 @@ import { getCompletionsConfig } from '../config/completions'
 import { SUPPORTED_LANGUAGES, COMPLETION_TRIGGERS } from '../config/languages'
 import { CompletionItemFactory } from '../factories/CompletionItemFactory'
 import { RegexUtils } from '../utils/RegexUtils'
-import { setDefaultResultOrder } from 'dns'
 
 export class CompletionProvider {
   private completionItemFactory: CompletionItemFactory
@@ -26,6 +25,8 @@ export class CompletionProvider {
       ...COMPLETION_TRIGGERS
     )
   }
+
+  // @
 
   private async provideCompletionItems(
     document: vscode.TextDocument,
